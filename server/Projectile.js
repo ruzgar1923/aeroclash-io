@@ -30,13 +30,13 @@ class Projectile {
       this.splashRadius = 95;
       this.isBomb = true;
     } else if (this.type === 'nuke_airburst' || this.type === 'airburst') {
-      // B-2 Spirit Grand Nuke Airburst Missile: Detonates mid-air after 1.25s releasing a colossal shockwave & 220px blast radius
+      // B-2 Spirit Rebalanced Nuke Airburst Missile: Dodgeable 140px blast, 75 flat damage + 22% splash
       this.speed = options.speed || 520;
-      this.radius = 14;
+      this.radius = 12;
       this.maxLifetime = 1.25;
-      this.flatDamage = 180;
-      this.percentDamage = 0.55;
-      this.splashRadius = 220;
+      this.flatDamage = 75;
+      this.percentDamage = 0.22;
+      this.splashRadius = 140;
       this.isBomb = true;
       this.isAirburst = true;
       this.isNuke = true;

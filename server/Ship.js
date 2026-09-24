@@ -279,7 +279,7 @@ const AIRCRAFT_ROSTER = {
     cannonCooldown: 0.15,
     secondaryType: 'nuke_airburst',
     secondaryCount: 1,
-    secondaryCooldown: 6.0,
+    secondaryCooldown: 9.5,
     secondaryName: 'B83 Tactical Nuke Airburst',
     radarRadius: 2100,
     weaponLayout: 'jet_quad',
