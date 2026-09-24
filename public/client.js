@@ -1637,6 +1637,40 @@ function drawProjectiles() {
 
       ctx.restore();
 
+    } else if (p.type === 'nuke_airburst' || p.type === 'airburst') {
+      // B-2 Spirit Tactical Nuke Airburst Missile (Stealth Missile with Cyan Plasma Glow)
+      ctx.save();
+      ctx.translate(p.x, p.y);
+      ctx.rotate(p.angle);
+
+      // Cyan Plasma Trail
+      const trailGrad = ctx.createLinearGradient(-35, 0, -10, 0);
+      trailGrad.addColorStop(0, 'rgba(0, 210, 255, 0)');
+      trailGrad.addColorStop(0.5, 'rgba(0, 210, 255, 0.7)');
+      trailGrad.addColorStop(1, 'rgba(255, 255, 255, 0.9)');
+      ctx.fillStyle = trailGrad;
+      ctx.beginPath();
+      ctx.ellipse(-20, 0, 18, 5, 0, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Stealth Missile Body
+      ctx.fillStyle = '#2c3e50';
+      ctx.fillRect(-12, -4, 22, 8);
+      
+      // Glowing Nuclear Yellow Nose Cone
+      ctx.fillStyle = '#f1c40f';
+      ctx.beginPath();
+      ctx.arc(10, 0, 4, -Math.PI / 2, Math.PI / 2);
+      ctx.fill();
+
+      // Cyan Pulsing Core
+      ctx.fillStyle = '#00d2ff';
+      ctx.beginPath();
+      ctx.arc(0, 0, 3.5, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.restore();
+
     } else if (p.type === 'rocket' || p.type === 'missile') {
       ctx.save();
       ctx.translate(p.x, p.y);
@@ -1654,25 +1688,47 @@ function drawProjectiles() {
       ctx.restore();
 
     } else {
-      // WW2 High-Velocity Elongated Tracer Streak
+      // Differentiated MM Caliber Tracers (30mm GAU-8 Gatling vs 20mm Cannons vs .50 Cal Machine Guns)
       ctx.save();
       ctx.translate(p.x, p.y);
       ctx.rotate(p.angle);
 
-      const grad = ctx.createLinearGradient(-26, 0, 5, 0);
-      grad.addColorStop(0, 'rgba(255, 71, 87, 0)');
-      grad.addColorStop(0.35, 'rgba(255, 165, 2, 0.7)');
-      grad.addColorStop(0.85, '#fffa65');
-      grad.addColorStop(1, '#ffffff');
+      const isGatling = p.damage >= 35 || p.type === 'gatling_brrrt';
+      const isHeavyCannon = p.damage >= 25 && !isGatling;
+
+      const streakLength = isGatling ? 32 : (isHeavyCannon ? 22 : 16);
+      const streakHeight = isGatling ? 4.5 : (isHeavyCannon ? 3.2 : 2.0);
+
+      const grad = ctx.createLinearGradient(-streakLength, 0, 6, 0);
+      if (isGatling) {
+        // A-10 30mm Depleted Uranium Avenger Gatling (Glowing Cyan/Orange High Energy Trail)
+        grad.addColorStop(0, 'rgba(0, 210, 255, 0)');
+        grad.addColorStop(0.3, 'rgba(0, 210, 255, 0.8)');
+        grad.addColorStop(0.8, '#f1c40f');
+        grad.addColorStop(1, '#ffffff');
+      } else if (isHeavyCannon) {
+        // 20mm High-Explosive Autocannons (Hispanos / MG 151 - Vibrant Green/Yellow Energy)
+        grad.addColorStop(0, 'rgba(46, 213, 115, 0)');
+        grad.addColorStop(0.4, 'rgba(46, 213, 115, 0.85)');
+        grad.addColorStop(0.85, '#fffa65');
+        grad.addColorStop(1, '#ffffff');
+      } else {
+        // .50 Cal Browning & 7.62mm Machine Guns (Classic Golden Amber Tracer Stream)
+        grad.addColorStop(0, 'rgba(255, 165, 2, 0)');
+        grad.addColorStop(0.4, 'rgba(255, 165, 2, 0.8)');
+        grad.addColorStop(0.85, '#fffa65');
+        grad.addColorStop(1, '#ffffff');
+      }
 
       ctx.fillStyle = grad;
       ctx.beginPath();
-      ctx.ellipse(-9, 0, 14, 2.5, 0, 0, Math.PI * 2);
+      ctx.ellipse(-streakLength / 2, 0, streakLength / 2, streakHeight, 0, 0, Math.PI * 2);
       ctx.fill();
 
+      // Glowing Tracer Core Tip
       ctx.fillStyle = '#ffffff';
       ctx.beginPath();
-      ctx.arc(3, 0, 1.8, 0, Math.PI * 2);
+      ctx.arc(3, 0, streakHeight * 0.7, 0, Math.PI * 2);
       ctx.fill();
       ctx.restore();
     }
