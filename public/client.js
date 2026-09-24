@@ -507,7 +507,13 @@ socket.on('tick', (data) => {
     if (ev.type === 'fire') {
       const isSelf = ev.ownerId === myId;
       if (distToCam < 1600) {
-        if (ev.projType === 'missile' || ev.projType === 'rocket') {
+        if (ev.projType === 'gatling_brrrt') {
+          window.soundManager.playCannon(isSelf);
+          if (distToCam < 1200) screenShake = Math.max(screenShake, 3.5);
+        } else if (ev.projType === 'nuke_airburst' || ev.isAirburst) {
+          window.soundManager.playMissileLaunch(isSelf);
+          if (distToCam < 1400) screenShake = Math.max(screenShake, 8.0);
+        } else if (ev.projType === 'missile' || ev.projType === 'rocket') {
           window.soundManager.playMissileLaunch(isSelf);
         } else if (ev.projType === 'bomb') {
           window.soundManager.playBombWhistle();
@@ -516,7 +522,7 @@ socket.on('tick', (data) => {
         }
       }
     } else if (ev.type === 'hit') {
-      const isHeavy = ev.projType === 'missile' || ev.projType === 'rocket' || ev.projType === 'bomb';
+      const isHeavy = ev.projType === 'missile' || ev.projType === 'rocket' || ev.projType === 'bomb' || ev.projType === 'nuke_airburst';
       createExplosion(ev.x, ev.y, isHeavy ? 35 : 12, isHeavy);
 
       if (isHeavy && distToCam < 1200) {
@@ -547,14 +553,15 @@ socket.on('tick', (data) => {
       }
     } else if (ev.type === 'bomb_blast') {
       const isBlockbuster = !!ev.isBlockbuster;
-      const radius = ev.radius || (isBlockbuster ? 180 : 95);
+      const isNuke = !!ev.isNuke || !!ev.isAirburst;
+      const radius = ev.radius || (isNuke ? 220 : (isBlockbuster ? 180 : 95));
       createExplosion(ev.x, ev.y, radius, true);
 
       // Create ground scorch crater
       craters.push({
         x: ev.x,
         y: ev.y,
-        radius: radius * (isBlockbuster ? 1.05 : 0.85),
+        radius: radius * (isNuke ? 1.2 : (isBlockbuster ? 1.05 : 0.85)),
         alpha: 1.0,
         createdAt: performance.now()
       });
@@ -564,15 +571,15 @@ socket.on('tick', (data) => {
         x: ev.x,
         y: ev.y,
         radius: 14,
-        maxRadius: radius * (isBlockbuster ? 1.8 : 1.6),
+        maxRadius: radius * (isNuke ? 2.2 : (isBlockbuster ? 1.8 : 1.6)),
         alpha: 0.98,
-        speed: isBlockbuster ? 520 : 460
+        speed: isNuke ? 650 : (isBlockbuster ? 520 : 460)
       });
 
       // Camera shake and sub-bass boom
-      if (distToCam < 2200) {
-        const proximityRatio = Math.max(0, 1 - distToCam / 2200);
-        screenShake = Math.max(screenShake, (isBlockbuster ? 45 : 28) * proximityRatio);
+      if (distToCam < 2500) {
+        const proximityRatio = Math.max(0, 1 - distToCam / 2500);
+        screenShake = Math.max(screenShake, (isNuke ? 55 : (isBlockbuster ? 45 : 28)) * proximityRatio);
         window.soundManager.playExplosion(true);
       }
     } else if (ev.type === 'crash') {

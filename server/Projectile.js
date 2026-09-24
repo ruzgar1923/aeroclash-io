@@ -29,16 +29,17 @@ class Projectile {
       this.percentDamage = 0.45; // 45% max HP splash
       this.splashRadius = 95;
       this.isBomb = true;
-    } else if (this.type === 'airburst') {
-      // B-2 Spirit Airburst Tactical Missile: Detonates mid-air after 1.15s releasing a massive AOE shockwave
-      this.speed = options.speed || 560;
-      this.radius = 10;
-      this.maxLifetime = 1.15;
-      this.flatDamage = 120;
-      this.percentDamage = 0.35;
-      this.splashRadius = 160;
+    } else if (this.type === 'nuke_airburst' || this.type === 'airburst') {
+      // B-2 Spirit Grand Nuke Airburst Missile: Detonates mid-air after 1.25s releasing a colossal shockwave & 220px blast radius
+      this.speed = options.speed || 520;
+      this.radius = 14;
+      this.maxLifetime = 1.25;
+      this.flatDamage = 180;
+      this.percentDamage = 0.55;
+      this.splashRadius = 220;
       this.isBomb = true;
       this.isAirburst = true;
+      this.isNuke = true;
     } else if (this.type === 'rocket') {
       // Rebalanced Aerial Rocket: fair dodgeable speed and non-one-shot damage
       this.speed = options.speed || 420;
@@ -97,7 +98,7 @@ class Projectile {
   }
 
   getDamage(targetMaxHp) {
-    if (this.type === 'bomb' || this.type === 'blockbuster' || this.type === 'mega_bomb' || this.type === 'airburst' || this.type === 'rocket') {
+    if (this.type === 'bomb' || this.type === 'blockbuster' || this.type === 'mega_bomb' || this.type === 'airburst' || this.type === 'nuke_airburst' || this.type === 'rocket') {
       return this.flatDamage + (targetMaxHp * this.percentDamage);
     }
     return this.damage;
