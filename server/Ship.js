@@ -58,9 +58,9 @@ const AIRCRAFT_ROSTER = {
     cannonDamage: 22,
     cannonCooldown: 0.22,
     secondaryType: 'homing_rocket',
-    secondaryCount: 4,
-    secondaryCooldown: 3.5,
-    secondaryName: 'HVAR Homing Guided Rockets (4x)',
+    secondaryCount: 2,
+    secondaryCooldown: 5.0,
+    secondaryName: 'HVAR Twin Light Rockets (2x)',
     radarRadius: 1000,
     weaponLayout: 'dual_wing',
     color: '#38ef7d'
