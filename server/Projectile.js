@@ -29,15 +29,25 @@ class Projectile {
       this.percentDamage = 0.45; // 45% max HP splash
       this.splashRadius = 95;
       this.isBomb = true;
+    } else if (this.type === 'airburst') {
+      // B-2 Spirit Airburst Tactical Missile: Detonates mid-air after 1.15s releasing a massive AOE shockwave
+      this.speed = options.speed || 560;
+      this.radius = 10;
+      this.maxLifetime = 1.15;
+      this.flatDamage = 120;
+      this.percentDamage = 0.35;
+      this.splashRadius = 160;
+      this.isBomb = true;
+      this.isAirburst = true;
     } else if (this.type === 'rocket') {
       // Rebalanced Aerial Rocket: fair dodgeable speed and non-one-shot damage
       this.speed = options.speed || 420;
       this.radius = 6;
       this.maxLifetime = 3.2;
-      this.turnRate = options.isHoming ? 1.8 : 0;
-      this.flatDamage = 25; // Nerfed from 45
-      this.percentDamage = 0.12; // Nerfed from 0.35 (12% max HP instead of 35%)
-      this.splashRadius = 28; // Nerfed from 40
+      this.turnRate = options.isHoming ? (options.turnRate || 1.8) : 0;
+      this.flatDamage = 25;
+      this.percentDamage = 0.12;
+      this.splashRadius = 28;
     } else {
       // Tok High-Velocity Tracer Bullet (Punchy yet evasive/dodgeable with maneuvers)
       this.speed = options.speed || 780;
@@ -87,7 +97,7 @@ class Projectile {
   }
 
   getDamage(targetMaxHp) {
-    if (this.type === 'bomb' || this.type === 'blockbuster' || this.type === 'mega_bomb' || this.type === 'rocket') {
+    if (this.type === 'bomb' || this.type === 'blockbuster' || this.type === 'mega_bomb' || this.type === 'airburst' || this.type === 'rocket') {
       return this.flatDamage + (targetMaxHp * this.percentDamage);
     }
     return this.damage;

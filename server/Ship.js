@@ -57,10 +57,10 @@ const AIRCRAFT_ROSTER = {
     radius: 25,
     cannonDamage: 22,
     cannonCooldown: 0.22,
-    secondaryType: 'rocket',
+    secondaryType: 'homing_rocket',
     secondaryCount: 4,
     secondaryCooldown: 3.5,
-    secondaryName: 'HVAR Rockets (4x)',
+    secondaryName: 'HVAR Homing Guided Rockets (4x)',
     radarRadius: 1000,
     weaponLayout: 'dual_wing',
     color: '#38ef7d'
@@ -231,10 +231,10 @@ const AIRCRAFT_ROSTER = {
     radius: 44,
     cannonDamage: 55,
     cannonCooldown: 0.12,
-    secondaryType: 'rocket_salvo',
-    secondaryCount: 6,
-    secondaryCooldown: 5.5,
-    secondaryName: 'GAU-8 30mm BRRRRT & Rockets',
+    secondaryType: 'homing_rocket_salvo',
+    secondaryCount: 4,
+    secondaryCooldown: 5.0,
+    secondaryName: 'AGM-65 Maverick Guided Missiles (4x)',
     radarRadius: 1600,
     weaponLayout: 'quad_nose',
     color: '#4b6584'
@@ -264,26 +264,26 @@ const AIRCRAFT_ROSTER = {
   },
 
   // --- TIER 5 (Ultimate Apex at Level 25) ---
-  f22: {
-    key: 'f22',
+  b2: {
+    key: 'b2',
     tier: 5,
-    name: 'F-22 Raptor',
-    role: '5th Gen Stealth Fighter',
-    sprite: 'plane_f22.png',
+    name: 'B-2 Spirit Stealth Bomber',
+    role: 'Apex Stealth Flying-Wing Bomber',
+    sprite: 'plane_b2.png',
     minLevel: 25,
-    baseMaxHp: 850,
-    baseSpeed: 310,
-    baseTurnSpeed: 3.3,
-    radius: 42,
-    cannonDamage: 50,
+    baseMaxHp: 890,
+    baseSpeed: 300,
+    baseTurnSpeed: 2.8,
+    radius: 46,
+    cannonDamage: 52,
     cannonCooldown: 0.15,
-    secondaryType: 'rocket_salvo',
-    secondaryCount: 6,
-    secondaryCooldown: 4.0,
-    secondaryName: 'AIM-120 AMRAAM Missile Barrage',
-    radarRadius: 2000,
+    secondaryType: 'airburst_missile',
+    secondaryCount: 1,
+    secondaryCooldown: 5.0,
+    secondaryName: 'B83 Airburst Cluster Missile',
+    radarRadius: 2100,
     weaponLayout: 'jet_quad',
-    color: '#00d2d3'
+    color: '#2c3e50'
   }
 };
 
@@ -417,7 +417,7 @@ class Ship {
 
   getAvailableEvolutions() {
     if (this.level >= 25 && this.tier < 5) {
-      return ['f22'];
+      return ['b2'];
     }
     if (this.level >= 18 && this.tier < 4) {
       return ['me262', 'b17', 'a10', 'ho229'];

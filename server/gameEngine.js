@@ -281,8 +281,36 @@ class GameEngine {
         }
         this.events.push({ type: 'fire', projType: 'bomb', ownerId: ship.id, x: ship.x, y: ship.y });
 
+      } else if (secType === 'airburst_missile') {
+        // B-2 Spirit Stealth Bomber: Launch B83 Airburst Cluster Missile (detonates mid-air after 1.15s or on impact)
+        const targetId = (ship.isLockedOn && ship.lockTargetId) ? ship.lockTargetId : null;
+        const airburstProj = new Projectile(
+          ship.id, ship.name, 'airburst',
+          ship.x + fwdX * (r + 15), ship.y + fwdY * (r + 15),
+          ship.angle,
+          { targetId: targetId, isHoming: !!targetId, turnRate: 1.1, speed: 560, team: ship.team }
+        );
+        this.projectiles.push(airburstProj);
+        this.events.push({ type: 'fire', projType: 'airburst', isAirburst: true, ownerId: ship.id, x: ship.x, y: ship.y });
+
+      } else if (secType === 'homing_rocket_salvo' || secType === 'homing_rocket') {
+        // P-51 & A-10: Low-tracking guided rockets (turnRate: 1.2)
+        const targetId = (ship.isLockedOn && ship.lockTargetId) ? ship.lockTargetId : null;
+        const count = ship.secondaryCount || 4;
+        const angles = count === 4 ? [-0.12, -0.04, 0.04, 0.12] : [-0.08, 0.08];
+        for (const off of angles) {
+          const rocket = new Projectile(
+            ship.id, ship.name, 'rocket',
+            ship.x + fwdX * (r + 8), ship.y + fwdY * (r + 8),
+            ship.angle + off,
+            { targetId: targetId, isHoming: true, turnRate: 1.2, team: ship.team }
+          );
+          this.projectiles.push(rocket);
+        }
+        this.events.push({ type: 'fire', projType: 'rocket', ownerId: ship.id, x: ship.x, y: ship.y });
+
       } else if (secType === 'rocket_salvo') {
-        // Me 262: Rebalanced 4 R4M unguided rockets (reduced from 8)
+        // Me 262: 4 R4M unguided rockets
         const angles = [-0.09, -0.03, 0.03, 0.09];
         for (const off of angles) {
           const rocket = new Projectile(
@@ -296,7 +324,7 @@ class GameEngine {
         this.events.push({ type: 'fire', projType: 'rocket', ownerId: ship.id, x: ship.x, y: ship.y });
 
       } else {
-        // Standard Rockets (I-16, Bf 110)
+        // Standard Rockets
         const targetId = (ship.isLockedOn && ship.lockTargetId) ? ship.lockTargetId : null;
         const count = ship.secondaryCount || 2;
         const angles = count === 2 ? [-0.08, 0.08] : [0];
@@ -306,7 +334,7 @@ class GameEngine {
             ship.id, ship.name, 'rocket',
             ship.x + fwdX * (r + 8), ship.y + fwdY * (r + 8),
             ship.angle + off,
-            { targetId: targetId, isHoming: !!targetId, team: ship.team }
+            { targetId: targetId, isHoming: !!targetId, turnRate: 1.1, team: ship.team }
           );
           this.projectiles.push(rocket);
         }
