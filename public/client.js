@@ -1422,8 +1422,10 @@ function drawMapBorders() {
 // Preload Authentic WW2 Aircraft Sprites
 const ww2Sprites = {};
 const spriteList = [
-  'plane_i16.png', 'plane_spitfire.png', 'plane_stuka.png', 'plane_bf110.png',
-  'plane_he111.png', 'plane_me262.png', 'plane_b17.png', 'plane_tier1.png'
+  'plane_i16.png', 'plane_spitfire.png', 'plane_p51.png', 'plane_stuka.png', 'plane_bf110.png',
+  'plane_f4u.png', 'plane_he111.png', 'plane_me262.png', 'plane_ho229.png', 'plane_a10.png',
+  'plane_b17.png', 'plane_f22.png', 'plane_tier1.png', 'plane_tier2.png', 'plane_tier3.png',
+  'plane_tier4.png', 'plane_zero.png', 'plane_il2.png', 'plane_mig15.png', 'plane_f86.png', 'plane_b29.png'
 ];
 spriteList.forEach(name => {
   const img = new Image();
