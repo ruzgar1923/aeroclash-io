@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AeroClash.io - Tactical Dogfight & Multi-Biome Air Superiority</title>
+  <link rel="stylesheet" href="style.css">
+  <!-- CrazyGames SDK v3 for Ad Monetization -->
+  <script src="https://sdk.crazygames.com/crazygames-sdk-v3.js"></script>
+</head>
+<body>
+  <!-- Dogfight Canvas -->
+  <canvas id="gameCanvas"></canvas>
+
+  <!-- Clean Flight HUD Overlay -->
+  <div id="hud">
+    <!-- Top Bar: XP, Level & Telemetry -->
+    <div class="flight-top-bar">
+      <div class="pilot-identity">
+        <span id="hudLevelBadge" class="level-badge">LVL 1</span>
+        <span id="hudPilotName" class="pilot-name">Pilot</span>
+        <span id="hudAircraftTier" class="tier-tag">Scout Fighter</span>
+        <span id="hudTeamBadge" class="team-badge hidden">ALLIES</span>
+      </div>
+      <div class="xp-track">
+        <div id="xpBarFill" class="xp-fill"></div>
+      </div>
+      <!-- Team Score Banner (Visible in Team Mode) -->
+      <div id="teamScoreBanner" class="team-score-banner hidden">
+        <span class="team-score-box allies-box">🔵 ALLIES: <strong id="alliesScore">0</strong></span>
+        <span class="score-divider">:</span>
+        <span class="team-score-box axis-box">🔴 AXIS: <strong id="axisScore">0</strong></span>
+      </div>
+      <div class="biome-telemetry">
+        <button id="autoFireToggleBtn" class="autofire-hud-btn" onclick="toggleAutoFire()" title="Oto-Ateş Aç/Kapat (Tuş: C)">🔥 AUTO-FIRE: OFF [C]</button>
+        <span id="currentBiomeIndicator" class="biome-indicator">PACIFIC ARCHIPELAGO</span>
+      </div>
+    </div>
+
+    <!-- Top Aces Squadron Leaderboard -->
+    <div class="leaderboard-box">
+      <div class="leaderboard-header">ACE LEADERBOARD</div>
+      <ul id="leaderboardList" class="leaderboard-list"></ul>
+    </div>
+
+    <!-- Tactical Combat Feed -->
+    <div id="killFeed"></div>
+
+    <!-- Level-up / Promotion Banners -->
+    <div id="promotionBanner" class="promo-banner hidden">
+      <span id="promoText">PROMOTED TO TIER 2: TWIN INTERCEPTOR</span>
+    </div>
+
+    <!-- DEEEP.IO STYLE EVOLUTION MODAL (Choose Your WW2 Aircraft) -->
+    <div id="evolutionModal" class="evolution-overlay hidden">
+      <div class="evolution-title">CHOOSE YOUR AIRCRAFT EVOLUTION</div>
+      <div id="evolutionCardsContainer" class="evolution-cards"></div>
+    </div>
+
+    <!-- DIEP.IO STYLE STAT / SKILL UPGRADE PANEL (Bottom-Left) -->
+    <div id="statUpgradePanel" class="stat-panel">
+      <div id="skillPointsIndicator" class="skill-points-counter hidden">
+        <span id="skillPointsText">3 SKILL POINTS</span>
+      </div>
+
+      <!-- Stat [1]: Max Hull -->
+      <div class="stat-row" data-stat="maxHp" onclick="upgradeStat('maxHp')">
+        <div class="stat-key">[1]</div>
+        <div class="stat-meta">
+          <div class="stat-label">Max Hull</div>
+          <div class="stat-pips" id="pips-maxHp">
+            <span class="pip"></span><span class="pip"></span><span class="pip"></span>
+            <span class="pip"></span><span class="pip"></span><span class="pip"></span><span class="pip"></span>
+          </div>
+        </div>
+        <button class="upgrade-btn" title="Press 1 or Click">+</button>
+      </div>
+
+      <!-- Stat [2]: Engine Speed -->
+      <div class="stat-row" data-stat="speed" onclick="upgradeStat('speed')">
+        <div class="stat-key">[2]</div>
+        <div class="stat-meta">
+          <div class="stat-label">Engine Speed</div>
+          <div class="stat-pips" id="pips-speed">
+            <span class="pip"></span><span class="pip"></span><span class="pip"></span>
+            <span class="pip"></span><span class="pip"></span><span class="pip"></span><span class="pip"></span>
+          </div>
+        </div>
+        <button class="upgrade-btn" title="Press 2 or Click">+</button>
+      </div>
+
+      <!-- Stat [3]: Autocannons -->
+      <div class="stat-row" data-stat="cannonDmg" onclick="upgradeStat('cannonDmg')">
+        <div class="stat-key">[3]</div>
+        <div class="stat-meta">
+          <div class="stat-label">Autocannons</div>
+          <div class="stat-pips" id="pips-cannonDmg">
+            <span class="pip"></span><span class="pip"></span><span class="pip"></span>
+            <span class="pip"></span><span class="pip"></span><span class="pip"></span><span class="pip"></span>
+          </div>
+        </div>
+        <button class="upgrade-btn" title="Press 3 or Click">+</button>
+      </div>
+
+      <!-- Stat [4]: Missile Systems -->
+      <div class="stat-row" data-stat="missileCd" onclick="upgradeStat('missileCd')">
+        <div class="stat-key">[4]</div>
+        <div class="stat-meta">
+          <div class="stat-label">Missile Systems</div>
+          <div class="stat-pips" id="pips-missileCd">
+            <span class="pip"></span><span class="pip"></span><span class="pip"></span>
+            <span class="pip"></span><span class="pip"></span><span class="pip"></span><span class="pip"></span>
+          </div>
+        </div>
+        <button class="upgrade-btn" title="Press 4 or Click">+</button>
+      </div>
+
+      <!-- Stat [5]: Hull Repair -->
+      <div class="stat-row" data-stat="regen" onclick="upgradeStat('regen')">
+        <div class="stat-key">[5]</div>
+        <div class="stat-meta">
+          <div class="stat-label">Hull Repair</div>
+          <div class="stat-pips" id="pips-regen">
+            <span class="pip"></span><span class="pip"></span><span class="pip"></span>
+            <span class="pip"></span><span class="pip"></span><span class="pip"></span><span class="pip"></span>
+          </div>
+        </div>
+        <button class="upgrade-btn" title="Press 5 or Click">+</button>
+      </div>
+    </div>
+
+    <!-- Flight Telemetry & Weapons (Bottom Center) -->
+    <div class="status-dock">
+      <div class="hp-track">
+        <div id="hpFill" class="hp-bar"></div>
+        <div id="hpLabel" class="hp-text">100 / 100 HP</div>
+      </div>
+
+      <!-- Boost / Afterburner Stamina Bar -->
+      <div class="boost-track">
+        <div id="boostFill" class="boost-bar"></div>
+        <div id="boostLabel" class="boost-text">AFTERBURNER: 100%</div>
+      </div>
+
+      <div class="flight-controls-status">
+        <div class="weapon-indicator">
+          <span class="key-hint">L-Click / Space</span>
+          <span class="weapon-name">Tracers</span>
+          <div class="cd-line"><div id="cannonCooldownFill" class="cd-fill"></div></div>
+        </div>
+
+        <div class="weapon-indicator">
+          <span class="key-hint">R-Click / K</span>
+          <span id="secondaryWeaponName" class="weapon-name">Secondary</span>
+          <div class="cd-line"><div id="torpedoCooldownFill" class="cd-fill missile-fill"></div></div>
+        </div>
+
+        <div class="flight-mode-indicator">
+          <span class="key-hint">W (Throttle) / S (Brake)</span>
+          <span id="flightThrottleText" class="throttle-text">CRUISE</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- CALL OF DUTY STYLE KILLSTREAK / SCORESTREAK PANEL (Bottom Right) -->
+    <div id="killstreakPanel" class="killstreak-panel">
+      <div class="streak-header">
+        <span class="streak-badge">KILLSTREAK</span>
+        <span id="streakCounter" class="streak-count">0 KILLS</span>
+      </div>
+      <div class="streak-list">
+        <div id="streakCard-recon" class="streak-card locked" onclick="activateKillstreak('recon')" title="Press 6: Reveals all enemy planes on minimap for 18s">
+          <div class="streak-key">[6]</div>
+          <div class="streak-details">
+            <span class="streak-name">RECON UAV</span>
+            <span id="reconReqText" class="streak-req">2 Kills</span>
+          </div>
+        </div>
+        <div id="streakCard-escort" class="streak-card locked" onclick="activateKillstreak('escort')" title="Press 7: Calls in an AI Spitfire Wingman for 40s">
+          <div class="streak-key">[7]</div>
+          <div class="streak-details">
+            <span class="streak-name">WINGMAN (40s)</span>
+            <span id="wingmanReqText" class="streak-req">3 Kills</span>
+          </div>
+        </div>
+        <div id="streakCard-flak" class="streak-card locked" onclick="activateKillstreak('flak')" title="Press 8: Airburst Flak Artillery strike on crosshair (Consumes 5 kills)">
+          <div class="streak-key">[8]</div>
+          <div class="streak-details">
+            <span class="streak-name">FLAK BARRAGE</span>
+            <span class="streak-req">5 Kills</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Authentic CRT Phosphor Radar / Minimap (Bottom-Right) -->
+    <div class="minimap-container">
+      <div class="radar-crt-frame">
+        <canvas id="minimapCanvas" width="210" height="210"></canvas>
+        <span class="radar-compass comp-n">N</span>
+        <span class="radar-compass comp-e">E</span>
+        <span class="radar-compass comp-s">S</span>
+        <span class="radar-compass comp-w">W</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Start / Hangar Screen (Gentle & Welcoming) -->
+  <div id="startModal" class="modal-overlay">
+    <div class="hangar-box welcoming-hangar">
+      <div class="hangar-badge welcome-badge">🎖️ TACTICAL FLIGHT OPS &bull; HOŞ GELDİNİZ</div>
+      <h1 class="hangar-title">AERO CLASH .IO</h1>
+      <p class="hangar-subtitle">Air Superiority Across 4 Biomes &bull; Başlangıç: <strong>Polikarpov I-16</strong></p>
+
+      <!-- Game Mode & Squadron Selection -->
+      <div class="mode-select-container">
+        <div class="mode-select-label">SAVAŞ MODU & BİRLİK SEÇİMİ</div>
+        <div class="mode-select-row">
+          <button type="button" class="mode-btn active" id="modeBtnFfa" onclick="selectTeam('ffa')">
+            <span class="mode-icon">⚔️</span>
+            <span class="mode-title">Herkes Tek</span>
+            <span class="mode-desc">Free For All</span>
+          </button>
+          <button type="button" class="mode-btn team-allies" id="modeBtnAllies" onclick="selectTeam('allies')">
+            <span class="mode-icon">🔵</span>
+            <span class="mode-title">Müttefikler</span>
+            <span class="mode-desc">Allied Squadron</span>
+          </button>
+          <button type="button" class="mode-btn team-axis" id="modeBtnAxis" onclick="selectTeam('axis')">
+            <span class="mode-icon">🔴</span>
+            <span class="mode-title">Mihver</span>
+            <span class="mode-desc">Axis Squadron</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Pilot Callsign (Pre-filled, Gentle & Customizable) -->
+      <div class="callsign-section">
+        <label for="nicknameInput" class="callsign-label">Pilot Çağrı Kodunuz (İsteğe Bağlı Değiştirebilirsiniz):</label>
+        <div class="callsign-input-wrapper">
+          <input type="text" id="nicknameInput" placeholder="Çağrı Adı" maxlength="16" />
+          <button type="button" id="randomizeNickBtn" class="dice-btn" onclick="generateRandomCallsign()" title="Rastgele Çağrı Adı Üret">🎲</button>
+        </div>
+      </div>
+
+      <button id="startBtn" class="scramble-btn">✈️ HEMEN UÇUŞA GEÇ (SCRAMBLE)</button>
+
+      <!-- Clean Mission Briefing & Controls Grid -->
+      <div class="briefing-grid">
+        <div class="briefing-col">
+          <div class="briefing-heading">KONTROLLER & YENİLİKLER</div>
+          <ul>
+            <li><strong>Yön:</strong> Fare ile Nişan Al VEYA <kbd>A</kbd> / <kbd>D</kbd> Dönüş</li>
+            <li><strong>Gaz / Afterburner:</strong> <kbd>W</kbd> veya <kbd>Shift</kbd></li>
+            <li><strong>Hava Freni:</strong> <kbd>S</kbd> (Dar İt Dalaşı Manevrası)</li>
+            <li><strong>Makineli Tüfek:</strong> Sol Tık veya <kbd>Space</kbd> / <kbd>J</kbd> (Burun Yönü)</li>
+            <li><strong>🔥 Oto-Ateş:</strong> <kbd>C</kbd> tuşu ile aç/kapat (yorulmadan ateş et)</li>
+            <li><strong>İkincil Silah:</strong> Sağ Tık veya <kbd>K</kbd> (Bomba / Roket)</li>
+            <li><strong>Killstreak:</strong> <kbd>6</kbd> (UAV), <kbd>7</kbd> (Spitfire Eskort), <kbd>8</kbd> (Flak)</li>
+          </ul>
+        </div>
+        <div class="briefing-col">
+          <div class="briefing-heading">TAKTIKSEL İPUÇLARI</div>
+          <ul>
+            <li>🎯 <strong>Kuyruktan Vuruş:</strong> Uçağı arkasından (kuyruktan) vurduğunuzda <strong>%45 Kritik Hasar</strong> verirsiniz!</li>
+            <li>🛡️ <strong>Burun Zırhı:</strong> Kafa kafaya çarpışmalarda ön motor zırhı hasarı <strong>%20 azaltır</strong>.</li>
+            <li>🚀 <strong>Dengeli Roketler:</strong> Roketler ve Me 262 dengelendi; artık kaçış ve manevra fırsatınız var!</li>
+            <li>🤝 <strong>Takım Modu:</strong> Birlik seçerek dostlarınızla omuz omuza savaşın; dost ateşi kapalıdır!</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Shot Down Screen -->
+  <div id="deathModal" class="modal-overlay hidden">
+    <div class="hangar-box death-theme">
+      <div class="hangar-badge fatal-badge">AIRCRAFT DESTROYED</div>
+      <h1 class="hangar-title fatal-title">SHOT DOWN</h1>
+      <p id="deathReason" class="hangar-subtitle">Wreckage lost in hostile airspace.</p>
+
+      <div class="combat-stats-row">
+        <div class="stat-card">
+          <div class="stat-card-label">REACHED LEVEL</div>
+          <div id="deathLevel" class="stat-card-value">1</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-label">AIR SCORE</div>
+          <div id="deathScore" class="stat-card-value">0</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-label">AIRCRAFT CLASS</div>
+          <div id="deathTier" class="stat-card-value">-</div>
+        </div>
+      </div>
+
+      <button id="respawnBtn" class="scramble-btn">SCRAMBLE NEW AIRCRAFT</button>
+    </div>
+  </div>
+
+  <!-- Audio & Client Code -->
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="audio.js"></script>
+  <script src="client.js"></script>
+</body>
+</html>

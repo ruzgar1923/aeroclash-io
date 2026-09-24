@@ -1,0 +1,16 @@
+{
+  "name": "torpedoclash-io",
+  "version": "1.0.0",
+  "description": "Tactical naval multiplayer .io shooter game",
+  "main": "server/server.js",
+  "scripts": {
+    "start": "node server/server.js"
+  },
+  "keywords": ["game", "io", "multiplayer", "warship", "torpedo"],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.19.2",
+    "socket.io": "^4.7.5"
+  }
+}

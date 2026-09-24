@@ -1,0 +1,1087 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  user-select: none;
+}
+
+body, html {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background-color: #0d1724;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  color: #f1f2f6;
+}
+
+#gameCanvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  cursor: crosshair;
+}
+
+#hud {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+/* --- TOP FLIGHT BAR --- */
+.flight-top-bar {
+  position: absolute;
+  top: 14px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  background: rgba(14, 23, 36, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+  padding: 8px 18px;
+  min-width: 380px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+}
+
+.pilot-identity {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.level-badge {
+  background: #f1c40f;
+  color: #111;
+  padding: 2px 7px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 0.5px;
+}
+
+.pilot-name {
+  color: #fff;
+  letter-spacing: 0.5px;
+}
+
+.tier-tag {
+  color: #00d2ff;
+  font-size: 11px;
+  text-transform: uppercase;
+}
+
+.xp-track {
+  width: 100%;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.xp-fill {
+  height: 100%;
+  width: 0%;
+  background: #f1c40f;
+  transition: width 0.2s ease-out;
+}
+
+.biome-telemetry {
+  font-size: 10px;
+  color: #8395a7;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+}
+
+/* --- ACE LEADERBOARD (Top Right) --- */
+.leaderboard-box {
+  position: absolute;
+  top: 14px;
+  right: 16px;
+  background: rgba(14, 23, 36, 0.88);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  padding: 10px 14px;
+  min-width: 190px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+
+.leaderboard-header {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 1.2px;
+  color: #a4b0be;
+  margin-bottom: 6px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  padding-bottom: 4px;
+}
+
+.leaderboard-list {
+  list-style: none;
+  font-size: 12px;
+}
+
+.leaderboard-list li {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 3px;
+  color: #c8d6e5;
+}
+
+.leaderboard-list li.me {
+  color: #f1c40f;
+  font-weight: 700;
+}
+
+/* --- COMBAT KILLFEED (Top Left) --- */
+#killFeed {
+  position: absolute;
+  top: 14px;
+  left: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.kill-entry {
+  background: rgba(14, 23, 36, 0.88);
+  padding: 5px 10px;
+  border-radius: 4px;
+  font-size: 12px;
+  border-left: 3px solid #ff4757;
+  color: #dfe4ea;
+  animation: feedSlide 0.2s ease-out;
+}
+
+@keyframes feedSlide {
+  from { opacity: 0; transform: translateX(-8px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+/* --- DEEEP.IO STYLE EVOLUTION MODAL --- */
+.evolution-overlay {
+  position: absolute;
+  top: 18%;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  background: rgba(12, 20, 32, 0.94);
+  border: 1px solid rgba(241, 196, 15, 0.4);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.7);
+  border-radius: 12px;
+  padding: 18px 28px;
+  z-index: 50;
+  pointer-events: auto;
+  animation: evoSlide 0.25s ease-out;
+}
+
+@keyframes evoSlide {
+  from { opacity: 0; transform: translate(-50%, -20px); }
+  to { opacity: 1; transform: translate(-50%, 0); }
+}
+
+.evolution-title {
+  font-size: 13px;
+  font-weight: 900;
+  letter-spacing: 2px;
+  color: #f1c40f;
+  text-transform: uppercase;
+}
+
+.evolution-cards {
+  display: flex;
+  gap: 16px;
+}
+
+.evolution-card {
+  background: #182535;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+  padding: 14px 18px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  min-width: 140px;
+  transition: transform 0.15s, border-color 0.15s, background 0.15s;
+}
+
+.evolution-card:hover {
+  transform: translateY(-4px);
+  border-color: #f1c40f;
+  background: #203247;
+}
+
+.evolution-card-img {
+  width: 64px;
+  height: 64px;
+  object-fit: contain;
+}
+
+.evolution-card-name {
+  font-size: 13px;
+  font-weight: 800;
+  color: #fff;
+  text-align: center;
+}
+
+.evolution-card-role {
+  font-size: 10px;
+  font-weight: 700;
+  color: #00d2ff;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+}
+
+.evolution-select-btn {
+  background: #f1c40f;
+  color: #111;
+  border: none;
+  border-radius: 4px;
+  padding: 5px 12px;
+  font-size: 11px;
+  font-weight: 900;
+  cursor: pointer;
+  margin-top: 4px;
+}
+
+/* --- PROMO BANNER --- */
+.promo-banner {
+  position: absolute;
+  top: 14%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(14, 23, 36, 0.95);
+  border: 1px solid #00d2ff;
+  border-radius: 8px;
+  padding: 10px 30px;
+  font-size: 16px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  color: #00d2ff;
+  box-shadow: 0 4px 20px rgba(0, 210, 255, 0.3);
+  animation: bannerFade 2.6s ease-in-out forwards;
+}
+
+@keyframes bannerFade {
+  0% { opacity: 0; transform: translate(-50%, -15px); }
+  15% { opacity: 1; transform: translate(-50%, 0); }
+  85% { opacity: 1; transform: translate(-50%, 0); }
+  100% { opacity: 0; transform: translate(-50%, -10px); }
+}
+
+/* --- DIEP.IO STYLE STAT / SKILL UPGRADE PANEL (Bottom-Left) --- */
+.stat-panel {
+  position: absolute;
+  bottom: 16px;
+  left: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  pointer-events: auto;
+}
+
+.skill-points-counter {
+  background: #f1c40f;
+  color: #111;
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 1px;
+  padding: 4px 10px;
+  border-radius: 4px;
+  text-align: center;
+  margin-bottom: 2px;
+  animation: pulsePoint 1.2s infinite;
+}
+
+@keyframes pulsePoint {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.04); }
+}
+
+.stat-row {
+  display: flex;
+  align-items: center;
+  background: rgba(18, 29, 44, 0.92);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 5px;
+  padding: 4px 8px;
+  gap: 8px;
+  min-width: 220px;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.stat-row:hover {
+  background: rgba(28, 45, 68, 0.95);
+  border-color: rgba(255, 255, 255, 0.25);
+}
+
+.stat-key {
+  font-family: monospace;
+  font-size: 11px;
+  font-weight: 800;
+  color: #f1c40f;
+  background: rgba(255, 255, 255, 0.08);
+  padding: 2px 5px;
+  border-radius: 3px;
+}
+
+.stat-meta {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.stat-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: #dfe4ea;
+}
+
+.stat-pips {
+  display: flex;
+  gap: 3px;
+}
+
+.pip {
+  width: 14px;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 2px;
+  transition: background 0.15s;
+}
+
+/* Stat row color themes */
+.stat-row[data-stat="maxHp"] .pip.filled { background: #e74c3c; }
+.stat-row[data-stat="speed"] .pip.filled { background: #00b894; }
+.stat-row[data-stat="cannonDmg"] .pip.filled { background: #f39c12; }
+.stat-row[data-stat="missileCd"] .pip.filled { background: #e67e22; }
+.stat-row[data-stat="regen"] .pip.filled { background: #0984e3; }
+
+.upgrade-btn {
+  background: #f1c40f;
+  color: #111;
+  border: none;
+  border-radius: 3px;
+  width: 20px;
+  height: 20px;
+  font-weight: 900;
+  font-size: 13px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.4;
+  transition: opacity 0.15s, transform 0.1s;
+}
+
+.stat-panel.has-points .upgrade-btn {
+  opacity: 1;
+}
+
+.upgrade-btn:hover {
+  transform: scale(1.15);
+}
+
+/* --- FLIGHT STATUS DOCK (Bottom Center) --- */
+.status-dock {
+  position: absolute;
+  bottom: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  background: rgba(14, 23, 36, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+  padding: 8px 18px;
+  min-width: 320px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+}
+
+.hp-track {
+  width: 100%;
+  position: relative;
+  height: 12px;
+  background: #1e272e;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.hp-bar {
+  height: 100%;
+  width: 100%;
+  background: #2ed573;
+  transition: width 0.15s ease-out;
+}
+
+.hp-text {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 9px;
+  font-weight: 800;
+  color: #fff;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.8);
+}
+
+/* Afterburner / Boost Bar */
+.boost-track {
+  width: 100%;
+  position: relative;
+  height: 8px;
+  background: #182535;
+  border-radius: 3px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.boost-bar {
+  height: 100%;
+  width: 100%;
+  background: linear-gradient(90deg, #ff9f43, #ee5253);
+  transition: width 0.08s linear;
+}
+
+.boost-bar.overheated {
+  background: #ff4757 !important;
+  animation: overheatFlash 0.5s infinite alternate;
+}
+
+@keyframes overheatFlash {
+  from { opacity: 0.5; }
+  to { opacity: 1; }
+}
+
+.boost-text {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 7px;
+  font-weight: 900;
+  color: #fff;
+  letter-spacing: 0.5px;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.9);
+}
+
+.flight-controls-status {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  font-size: 11px;
+}
+
+.weapon-indicator {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.key-hint {
+  font-size: 9px;
+  color: #8395a7;
+  font-family: monospace;
+}
+
+.weapon-name {
+  font-weight: 700;
+  color: #dfe4ea;
+}
+
+.cd-line {
+  width: 60px;
+  height: 4px;
+  background: #2f3542;
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.cd-fill {
+  height: 100%;
+  width: 100%;
+  background: #00d2ff;
+  transition: width 0.08s linear;
+}
+
+.cd-fill.missile-fill {
+  background: #ff4757;
+}
+
+.flight-mode-indicator {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.throttle-text {
+  font-size: 11px;
+  font-weight: 800;
+  color: #00d2ff;
+}
+
+/* --- CALL OF DUTY STYLE KILLSTREAK PANEL (Bottom Right) --- */
+.killstreak-panel {
+  position: absolute;
+  bottom: 16px;
+  right: 242px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  background: rgba(14, 23, 36, 0.92);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 8px;
+  padding: 8px 10px;
+  min-width: 140px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+}
+
+.streak-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding-bottom: 4px;
+}
+
+.streak-badge {
+  font-size: 9px;
+  font-weight: 800;
+  color: #ff9f43;
+  letter-spacing: 0.8px;
+}
+
+.streak-count {
+  font-size: 11px;
+  font-weight: 900;
+  color: #fff;
+}
+
+.streak-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.streak-card {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 4px;
+  padding: 4px 8px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.streak-card.locked {
+  opacity: 0.38;
+  cursor: not-allowed;
+  filter: grayscale(0.8);
+}
+
+.streak-card.ready {
+  opacity: 1;
+  border-color: #2ed573;
+  background: rgba(46, 213, 115, 0.18);
+  box-shadow: 0 0 8px rgba(46, 213, 115, 0.35);
+  animation: streakPulse 1.4s infinite alternate;
+}
+
+@keyframes streakPulse {
+  0% { box-shadow: 0 0 4px rgba(46, 213, 115, 0.3); }
+  100% { box-shadow: 0 0 12px rgba(46, 213, 115, 0.7); }
+}
+
+.streak-card.active-streak {
+  border-color: #00d2ff !important;
+  background: rgba(0, 210, 255, 0.2) !important;
+  animation: activeStreakPulse 1.1s infinite alternate !important;
+}
+
+@keyframes activeStreakPulse {
+  0% { box-shadow: 0 0 6px rgba(0, 210, 255, 0.4); }
+  100% { box-shadow: 0 0 18px rgba(0, 210, 255, 0.95); }
+}
+
+.streak-card:not(.locked):hover {
+  transform: translateX(-3px);
+  border-color: #f1c40f;
+}
+
+.streak-key {
+  font-size: 10px;
+  font-weight: 900;
+  color: #f1c40f;
+  background: rgba(0,0,0,0.5);
+  padding: 2px 4px;
+  border-radius: 3px;
+}
+
+.streak-details {
+  display: flex;
+  flex-direction: column;
+}
+
+.streak-name {
+  font-size: 10px;
+  font-weight: 800;
+  color: #fff;
+}
+
+.streak-req {
+  font-size: 8.5px;
+  color: #a4b0be;
+}
+
+/* --- CRT PHOSPHOR RADAR / MINIMAP (Bottom Right) --- */
+.minimap-container {
+  position: absolute;
+  bottom: 16px;
+  right: 16px;
+  width: 218px;
+  height: 218px;
+  background: radial-gradient(circle, #081a18 0%, #030b0b 90%, #000 100%);
+  border: 4px solid #2f3542;
+  border-radius: 50%;
+  box-shadow: 0 0 24px rgba(46, 213, 115, 0.25), inset 0 0 20px rgba(0, 0, 0, 0.9), 0 8px 24px rgba(0,0,0,0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.radar-crt-frame {
+  position: relative;
+  width: 210px;
+  height: 210px;
+  border-radius: 50%;
+  overflow: hidden;
+}
+
+#minimapCanvas {
+  width: 210px;
+  height: 210px;
+  display: block;
+}
+
+.radar-compass {
+  position: absolute;
+  font-size: 10px;
+  font-weight: 900;
+  font-family: monospace;
+  color: #2ed573;
+  text-shadow: 0 0 6px rgba(46, 213, 115, 0.8);
+  pointer-events: none;
+  z-index: 5;
+}
+.comp-n { top: 4px; left: 50%; transform: translateX(-50%); }
+.comp-e { right: 5px; top: 50%; transform: translateY(-50%); }
+.comp-s { bottom: 4px; left: 50%; transform: translateX(-50%); }
+.comp-w { left: 5px; top: 50%; transform: translateY(-50%); }
+
+
+/* --- START / HANGAR MODAL (Crafted Indie Styling) --- */
+.modal-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(8, 14, 22, 0.88);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+
+.hangar-box {
+  background: #111b29;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 12px;
+  padding: 30px 38px;
+  max-width: 680px;
+  width: 92%;
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.6);
+  text-align: center;
+}
+
+.hangar-badge {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 2px;
+  background: rgba(0, 210, 255, 0.15);
+  color: #00d2ff;
+  padding: 3px 10px;
+  border-radius: 4px;
+  margin-bottom: 8px;
+}
+
+.hangar-title {
+  font-size: 32px;
+  font-weight: 900;
+  letter-spacing: 1.5px;
+  color: #fff;
+  margin-bottom: 4px;
+}
+
+.hangar-subtitle {
+  font-size: 13px;
+  color: #8395a7;
+  margin-bottom: 22px;
+}
+
+.callsign-input-wrapper {
+  margin-bottom: 16px;
+}
+
+.callsign-input-wrapper input {
+  width: 100%;
+  max-width: 380px;
+  padding: 12px 18px;
+  background: #09101a;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 6px;
+  color: #fff;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-align: center;
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.callsign-input-wrapper input:focus {
+  border-color: #00d2ff;
+}
+
+.scramble-btn {
+  width: 100%;
+  max-width: 380px;
+  padding: 13px;
+  background: #00d2ff;
+  color: #051424;
+  border: none;
+  border-radius: 6px;
+  font-size: 15px;
+  font-weight: 900;
+  letter-spacing: 1.5px;
+  cursor: pointer;
+  transition: transform 0.1s, background 0.15s;
+}
+
+.scramble-btn:hover {
+  background: #38e1ff;
+  transform: translateY(-1px);
+}
+
+.briefing-grid {
+  display: flex;
+  gap: 20px;
+  margin-top: 24px;
+  text-align: left;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  padding-top: 18px;
+}
+
+.briefing-col {
+  flex: 1;
+}
+
+.briefing-heading {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 1.2px;
+  color: #00d2ff;
+  margin-bottom: 8px;
+}
+
+.briefing-col ul {
+  list-style: none;
+  font-size: 12px;
+  color: #a4b0be;
+  line-height: 1.7;
+}
+
+kbd {
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 3px;
+  padding: 1px 4px;
+  font-family: monospace;
+  font-size: 10px;
+  color: #fff;
+}
+
+.mk-warning {
+  color: #ff6b6b;
+  margin-top: 4px;
+}
+
+/* Death screen cards */
+.death-theme .fatal-badge {
+  background: rgba(255, 71, 87, 0.15);
+  color: #ff4757;
+}
+
+.death-theme .fatal-title {
+  color: #ff4757;
+}
+
+.combat-stats-row {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  margin: 20px 0;
+}
+
+.stat-card {
+  background: #09101a;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 6px;
+  padding: 12px 18px;
+  min-width: 110px;
+}
+
+.stat-card-label {
+  font-size: 10px;
+  font-weight: 700;
+  color: #8395a7;
+  letter-spacing: 0.8px;
+  margin-bottom: 4px;
+}
+
+.stat-card-value {
+  font-size: 20px;
+  font-weight: 900;
+  color: #f1c40f;
+}
+
+.hidden {
+  display: none !important;
+}
+
+/* --- TEAM HUD & SQUADRON STYLING --- */
+.team-badge {
+  font-size: 10px;
+  font-weight: 800;
+  padding: 2px 7px;
+  border-radius: 4px;
+  letter-spacing: 0.8px;
+}
+
+.team-badge.allies {
+  background: rgba(0, 210, 255, 0.2);
+  color: #00d2ff;
+  border: 1px solid rgba(0, 210, 255, 0.4);
+}
+
+.team-badge.axis {
+  background: rgba(255, 71, 87, 0.2);
+  color: #ff4757;
+  border: 1px solid rgba(255, 71, 87, 0.4);
+}
+
+.team-score-banner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 3px 14px;
+  border-radius: 12px;
+  background: rgba(7, 13, 22, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 1px;
+}
+
+.allies-box {
+  color: #00d2ff;
+}
+
+.axis-box {
+  color: #ff4757;
+}
+
+.score-divider {
+  color: #747d8c;
+  font-weight: 900;
+}
+
+.autofire-hud-btn {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #c8d6e5;
+  padding: 3px 9px;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-right: 8px;
+}
+
+.autofire-hud-btn:hover {
+  background: rgba(255, 255, 255, 0.16);
+  border-color: #00d2ff;
+}
+
+.autofire-hud-btn.active {
+  background: rgba(255, 71, 87, 0.25);
+  border-color: #ff4757;
+  color: #ff6b6b;
+  box-shadow: 0 0 12px rgba(255, 71, 87, 0.45);
+  animation: pulse-fire 1s infinite alternate;
+}
+
+@keyframes pulse-fire {
+  from { opacity: 0.85; }
+  to { opacity: 1; filter: brightness(1.2); }
+}
+
+/* --- WELCOMING HANGAR & SQUADRON SELECTOR --- */
+.welcoming-hangar {
+  max-width: 720px;
+  border-top: 3px solid #00d2ff;
+}
+
+.welcome-badge {
+  background: rgba(0, 210, 255, 0.15);
+  color: #00d2ff;
+  letter-spacing: 2px;
+}
+
+.mode-select-container {
+  margin: 14px 0 16px;
+}
+
+.mode-select-label {
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 1.5px;
+  color: #8395a7;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+}
+
+.mode-select-row {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+}
+
+.mode-btn {
+  flex: 1;
+  max-width: 190px;
+  background: #09101a;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+  padding: 10px 8px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: all 0.18s ease;
+}
+
+.mode-btn:hover {
+  border-color: rgba(255, 255, 255, 0.35);
+  transform: translateY(-2px);
+}
+
+.mode-btn.active {
+  border-color: #f1c40f;
+  background: rgba(241, 196, 15, 0.12);
+  box-shadow: 0 0 14px rgba(241, 196, 15, 0.25);
+}
+
+.mode-btn.team-allies.active {
+  border-color: #00d2ff;
+  background: rgba(0, 210, 255, 0.14);
+  box-shadow: 0 0 14px rgba(0, 210, 255, 0.35);
+}
+
+.mode-btn.team-axis.active {
+  border-color: #ff4757;
+  background: rgba(255, 71, 87, 0.14);
+  box-shadow: 0 0 14px rgba(255, 71, 87, 0.35);
+}
+
+.mode-icon {
+  font-size: 18px;
+  margin-bottom: 2px;
+}
+
+.mode-title {
+  font-size: 13px;
+  font-weight: 800;
+  color: #fff;
+}
+
+.mode-desc {
+  font-size: 10px;
+  color: #8395a7;
+  text-transform: uppercase;
+  margin-top: 1px;
+}
+
+.callsign-section {
+  margin: 14px 0 18px;
+}
+
+.callsign-label {
+  display: block;
+  font-size: 11px;
+  color: #a4b0be;
+  margin-bottom: 6px;
+  font-weight: 600;
+}
+
+.dice-btn {
+  background: #09101a;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 6px;
+  font-size: 18px;
+  width: 44px;
+  height: 44px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.dice-btn:hover {
+  transform: rotate(25deg) scale(1.1);
+  border-color: #f1c40f;
+  background: rgba(241, 196, 15, 0.1);
+}
